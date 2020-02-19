@@ -72,27 +72,8 @@ class AB(arcade.Window):
 
         
         # Create the pipe
-        for y in range(int(SCREEN_HEIGHT + IMAGE_SIZE), 100000, PIPE_TWO_DISTANCE):
-            self.pipe_position = random.randint(PIPE_MININUM, PIPE_MAXINUM)
-            for x in range(0, self.pipe_position, int(IMAGE_SIZE * SCALING)):
-                pipe = arcade.Sprite(PIPE_SOURCE, SCALING)
-  
-                pipe.center_x = x
-                pipe.center_y = y
-                self.pipe_sprites.append(pipe)
-
-                pipe = arcade.Sprite(PIPE_SOURCE, SCALING)
-                pipe.center_x = x + PIPE_INTERVAL + self.pipe_position - self.pipe_position % (IMAGE_SIZE * SCALING)
-                pipe.center_y = y
-                self.pipe_sprites.append(pipe)
-
-            for x in range(0, 2):
-                self.enemy_position = random.randint(self.pipe_position + 25, self.pipe_position + PIPE_INTERVAL - 25)
-                enemy = arcade.Sprite(ENEMY_SOURCE, SCALING)
-                enemy.center_x = self.enemy_position
-                enemy.center_y = y + 150 + x * 250
-                self.enemy_sprites.append(enemy)
-                
+        for pipe_height in range(int(SCREEN_HEIGHT + IMAGE_SIZE), 100000, PIPE_TWO_DISTANCE):
+            self.create_pipe_and_enemy(pipe_height)
 
         # Create the 'physics engine'
         self.physics_engine = arcade.PhysicsEnginePlatformer(self.player, self.wall, GRAVITY)
@@ -123,12 +104,12 @@ class AB(arcade.Window):
         """
         if (
             symbol == arcade.key.N
-            or symbol == arcade.key.RIGHT
+            or symbol == arcade.key.LEFT
         ):
             self.player.change_x = -BALL_MOVEMENT_SPEED * 0.5
         if (
             symbol == arcade.key.I
-            or symbol == arcade.key.LEFT
+            or symbol == arcade.key.RIGHT
         ):
             self.player.change_x = BALL_MOVEMENT_SPEED * 0.5
 
@@ -144,7 +125,10 @@ class AB(arcade.Window):
             or self.player.collides_with_list(self.enemy_sprites)
             or self.player.bottom < 0):
             arcade.close_window()
-            #self.setup()
+        if self.player.left < 0:
+            self.player.left = 0
+        if self.player.right > SCREEN_WIDTH:
+            self.player.right = SCREEN_WIDTH
         SCORE = 0
         self.physics_engine.update()
         
@@ -176,7 +160,20 @@ class AB(arcade.Window):
             
             # Do the scrolling
             arcade.set_viewport(0, SCREEN_WIDTH, self.view_bottom, SCREEN_HEIGHT + self.view_bottom)
+        
+        # Delete pipe sprites if they are no langer on the screen.
+        for pipe in self.pipe_sprites:
+            if pipe.center_y < self.view_bottom:
+                pipe.kill()
 
+        for enemy in self.enemy_sprites:
+            if enemy.center_y < self.view_bottom:
+                enemy.kill()
+
+        
+
+            
+        print(len(self.pipe_sprites), '+', len(self.enemy_sprites))
 
     def on_draw(self):
         """TODO: Docstring for on_drew.
@@ -193,11 +190,39 @@ class AB(arcade.Window):
         score_text = f"Score: {self.score}"
         arcade.draw_text(score_text, 10 , self.view_bottom + 10, arcade.csscolor.BLACK, 18, font_name = "FreeSans")
 
+    def create_pipe_and_enemy(self, pipe_height):
+        """TODO: Create pipe and enemy every runing time.
+        :returns: TODO
 
+        """
+        self.pipe_position = random.randint(PIPE_MININUM, PIPE_MAXINUM)
+        for x in range(0, self.pipe_position, int(IMAGE_SIZE * SCALING)):
+            pipe = arcade.Sprite(PIPE_SOURCE, SCALING)
+  
+            pipe.center_x = x
+            pipe.center_y = pipe_height
+            self.pipe_sprites.append(pipe)
+
+            pipe = arcade.Sprite(PIPE_SOURCE, SCALING)
+            pipe.center_x = x + PIPE_INTERVAL + self.pipe_position - self.pipe_position % (IMAGE_SIZE * SCALING)
+            pipe.center_y = pipe_height
+            self.pipe_sprites.append(pipe)
+
+        for x in range(0, 2):
+            self.enemy_position = random.randint(self.pipe_position + 25, self.pipe_position + PIPE_INTERVAL - 25)
+            enemy = arcade.Sprite(ENEMY_SOURCE, SCALING)
+            enemy.center_x = self.enemy_position
+            enemy.center_y = pipe_height + 150 + x * 250
+            self.enemy_sprites.append(enemy)
+                
+
+        
 if __name__ == "__main__":
-    AB = AB()
-    AB.setup()
-    arcade.run()
+    while 1:
+        ABC = AB()
+        ABC.setup()
+        arcade.run()
+        print("arcadeS")
         
         
         
