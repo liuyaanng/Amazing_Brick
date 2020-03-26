@@ -10,9 +10,10 @@ SCREEN_WIDTH = 600
 SCREEN_HEIGHT = 800
 SCREEN_TITLE = "Amazing Brick"
 SCALING = 0.5
-# image size: 128x128
-IMAGE_SIZE = 128
-PIPE_SOURCE = ":resources:images/tiles/lavaTop_low.png"
+# image size: 128x800
+IMAGE_WIDTH = 800
+IMAGE_HEIGHT = 128
+PIPE_SOURCE = "/Users/kevin/Desktop/LightBrown.png"
 BALL_SOURCE = ":resources:images/enemies/bee.png"
 ENEMY_SOURCE = ":resources:images/space_shooter/meteorGrey_big3.png"
 PIPE_MAXINUM = 300
@@ -23,6 +24,8 @@ BALL_MOVEMENT_SPEED = 5
 BALL_JUMP_SPEED = 20
 GRAVITY = 1
 SCORE = 0
+
+
 
 # How many pixels to keep as a minium margin between character 
 # and the edge of the screen
@@ -54,6 +57,7 @@ class AB(arcade.Window):
         # Keep track of the Score
         self.score = 0
 
+        self.is_add_pipe = True
     def setup(self):
         """TODO: Docstring for setup.
         :returns: TODO
@@ -71,9 +75,10 @@ class AB(arcade.Window):
         self.score = 0
 
         
-        # Create the pipe
-        for pipe_height in range(int(SCREEN_HEIGHT + IMAGE_SIZE), 100000, PIPE_TWO_DISTANCE):
-            self.create_pipe_and_enemy(pipe_height)
+        # Create two pipes when set up the game.
+        self.pipe_initial_position = SCREEN_HEIGHT - SCALING * IMAGE_HEIGHT
+        self.create_pipe_and_enemy(self.pipe_initial_position)
+        self.create_pipe_and_enemy(self.pipe_initial_position + PIPE_TWO_DISTANCE)
 
         # Create the 'physics engine'
         self.physics_engine = arcade.PhysicsEnginePlatformer(self.player, self.wall, GRAVITY)
@@ -133,9 +138,9 @@ class AB(arcade.Window):
         self.physics_engine.update()
         
         # Cal score
-        if self.player.center_y > SCREEN_HEIGHT + IMAGE_SIZE:
+        if self.player.center_y > self.pipe_initial_position:
             
-            SCORE = int((self.player.center_y - (SCREEN_HEIGHT + IMAGE_SIZE) ) / PIPE_TWO_DISTANCE) + 1
+            SCORE = int((self.player.center_y - (self.pipe_initial_position) ) / PIPE_TWO_DISTANCE) + 1
         #self.score = Score
         if self.score < SCORE:
             self.score = SCORE
@@ -161,18 +166,33 @@ class AB(arcade.Window):
             # Do the scrolling
             arcade.set_viewport(0, SCREEN_WIDTH, self.view_bottom, SCREEN_HEIGHT + self.view_bottom)
         
+        # Create pipe sprites if they are already into the screen.
         # Delete pipe sprites if they are no langer on the screen.
+        flag = False
+        pipe_list = self.get_pipe_y()
         for pipe in self.pipe_sprites:
+            pipe_new = pipe.center_y + PIPE_TWO_DISTANCE
+            
+            if (top_boundary - pipe.center_y < PIPE_TWO_DISTANCE) and pipe_new not in pipe_list and self.is_add_pipe:
+               self.create_pipe_and_enemy(int(pipe.center_y + PIPE_TWO_DISTANCE))
+
             if pipe.center_y < self.view_bottom:
-                pipe.kill()
+                if (top_boundary - pipe.center_y < PIPE_TWO_DISTANCE) and pipe_new not in pipe_list:
+                   self.create_pipe_and_enemy(int(pipe.center_y + PIPE_TWO_DISTANCE))
+                self.pipe_sprites.remove(pipe)
+                pipe_list = self.get_pipe_y()
+                flag = True
+                if pipe.center_y in pipe_list:
+                    flag = False
+        if flag: self.is_add_pipe = True
 
         for enemy in self.enemy_sprites:
             if enemy.center_y < self.view_bottom:
                 enemy.kill()
+                #flag = True
 
-        
 
-            
+        print(self.player.center_y)
         print(len(self.pipe_sprites), '+', len(self.enemy_sprites))
 
     def on_draw(self):
@@ -188,41 +208,61 @@ class AB(arcade.Window):
 
         # Draw score on the screen
         score_text = f"Score: {self.score}"
-        arcade.draw_text(score_text, 10 , self.view_bottom + 10, arcade.csscolor.BLACK, 18, font_name = "FreeSans")
+        arcade.draw_text(score_text, 10 , self.view_bottom + SCREEN_HEIGHT - 40, arcade.csscolor.RED, 18, font_name = "FreeSans")
 
     def create_pipe_and_enemy(self, pipe_height):
-        """TODO: Create pipe and enemy every runing time.
+        """TODO: Create pipe every runing time.
         :returns: TODO
 
         """
+        # Require a random position for pipe every running time
         self.pipe_position = random.randint(PIPE_MININUM, PIPE_MAXINUM)
-        for x in range(0, self.pipe_position, int(IMAGE_SIZE * SCALING)):
-            pipe = arcade.Sprite(PIPE_SOURCE, SCALING)
-  
-            pipe.center_x = x
-            pipe.center_y = pipe_height
-            self.pipe_sprites.append(pipe)
 
-            pipe = arcade.Sprite(PIPE_SOURCE, SCALING)
-            pipe.center_x = x + PIPE_INTERVAL + self.pipe_position - self.pipe_position % (IMAGE_SIZE * SCALING)
-            pipe.center_y = pipe_height
-            self.pipe_sprites.append(pipe)
+        # Cal the pipe center position depend on IMAGE_WIDTH
+        pipe_position_left = self.pipe_position - (IMAGE_WIDTH * SCALING) // 2
+        pipe_position_right = self.pipe_position + PIPE_INTERVAL + (IMAGE_WIDTH * SCALING) // 2
 
-        for x in range(0, 2):
+        # Create the left pipe
+        pipe = arcade.Sprite(PIPE_SOURCE, SCALING)
+        pipe.center_x = self.pipe_position - (IMAGE_WIDTH * SCALING) // 2
+        pipe.center_y = pipe_height
+        self.pipe_sprites.append(pipe)
+        
+        #Create the right pipe
+        pipe = arcade.Sprite(PIPE_SOURCE, SCALING)
+        pipe.center_x = pipe_position_right
+        pipe.center_y = pipe_height
+        self.pipe_sprites.append(pipe)
+
+        self.is_add_pipe = False
+        
+        # Create two enemy
+        for i in range(0, 2):
+
+            # Require the enemy position with pipe
             self.enemy_position = random.randint(self.pipe_position + 25, self.pipe_position + PIPE_INTERVAL - 25)
             enemy = arcade.Sprite(ENEMY_SOURCE, SCALING)
             enemy.center_x = self.enemy_position
-            enemy.center_y = pipe_height + 150 + x * 250
+            enemy.center_y = pipe_height + 150 + i * 250
             self.enemy_sprites.append(enemy)
-                
+        
+    def get_pipe_y(self):
+        """TODO: Docstring for get_pipe_y.
+        :returns: TODO
+
+        """
+        pipe_y_list = []
+        for pipe in self.pipe_sprites:
+            pipe_y_list.append(pipe.center_y)
+        #print(pipe_y_list)
+        return pipe_y_list
 
         
 if __name__ == "__main__":
-    while 1:
-        ABC = AB()
-        ABC.setup()
-        arcade.run()
-        print("arcadeS")
-        
+    ABC = AB()
+    ABC.setup()
+    arcade.run()
+    print("arcadeS")
+    
         
         
