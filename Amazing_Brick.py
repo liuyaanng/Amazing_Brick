@@ -4,7 +4,7 @@
 
 import arcade
 import random
-
+import time
 
 SCREEN_WIDTH = 600
 SCREEN_HEIGHT = 800
@@ -13,7 +13,7 @@ SCALING = 0.5
 # image size: 128x800
 IMAGE_WIDTH = 800
 IMAGE_HEIGHT = 128
-PIPE_SOURCE = "/Users/kevin/Desktop/LightBrown.png"
+PIPE_SOURCE = "images/black_pipe.png"
 BALL_SOURCE = ":resources:images/enemies/bee.png"
 ENEMY_SOURCE = ":resources:images/space_shooter/meteorGrey_big3.png"
 PIPE_MAXINUM = 300
@@ -24,6 +24,7 @@ BALL_MOVEMENT_SPEED = 5
 BALL_JUMP_SPEED = 20
 GRAVITY = 1
 SCORE = 0
+MAX_SCORE = 0
 
 
 
@@ -44,6 +45,19 @@ class AB(arcade.Window):
         self.ball_sprites = arcade.SpriteList()
         self.pipe_sprites = arcade.SpriteList()
         self.enemy_sprites = arcade.SpriteList()
+
+        self.MAX_SCORE = 0
+        self.TOTAL_GAME_NUM = 0
+    def setup(self):
+        """TODO: Docstring for setup.
+        :returns: TODO
+
+        """
+        # remove all sprite
+        
+        self.ball_sprites = arcade.SpriteList()
+        self.pipe_sprites = arcade.SpriteList()
+        self.enemy_sprites = arcade.SpriteList()
         # physics engine
         self.physics_engine = None
         # the left pipe's right position
@@ -58,11 +72,6 @@ class AB(arcade.Window):
         self.score = 0
 
         self.is_add_pipe = True
-    def setup(self):
-        """TODO: Docstring for setup.
-        :returns: TODO
-
-        """
         arcade.set_background_color(arcade.color.WHITE)
         self.player = arcade.Sprite(BALL_SOURCE, SCALING)
         self.player.center_y = SCREEN_HEIGHT - TOP_VIEW_MARGIN
@@ -73,8 +82,9 @@ class AB(arcade.Window):
 
         # Keep track of the Score
         self.score = 0
-
+        self.max_score = 0
         
+        self.SCORE = 0
         # Create two pipes when set up the game.
         self.pipe_initial_position = SCREEN_HEIGHT - SCALING * IMAGE_HEIGHT
         self.create_pipe_and_enemy(self.pipe_initial_position)
@@ -128,25 +138,21 @@ class AB(arcade.Window):
         """
         if (self.player.collides_with_list(self.pipe_sprites) 
             or self.player.collides_with_list(self.enemy_sprites)
-            or self.player.bottom < 0):
-            arcade.close_window()
+            or self.player.bottom < 0
+            or self.view_bottom < 0):
+            time.sleep(0.5)
+            self.setup()
+            self.TOTAL_GAME_NUM += 1
+            #arcade.cleanup_texture_cache()
+            #arcade.close_window()
         if self.player.left < 0:
             self.player.left = 0
         if self.player.right > SCREEN_WIDTH:
             self.player.right = SCREEN_WIDTH
-        SCORE = 0
         self.physics_engine.update()
         
-        # Cal score
-        if self.player.center_y > self.pipe_initial_position:
-            
-            SCORE = int((self.player.center_y - (self.pipe_initial_position) ) / PIPE_TWO_DISTANCE) + 1
-        #self.score = Score
-        if self.score < SCORE:
-            self.score = SCORE
-        else:
-            self.score = self.score
-
+        # calucate current score and max score
+        self.score, self.MAX_SCORE = self.cal_score()
 
         # Manage Scrolling
 
@@ -182,18 +188,18 @@ class AB(arcade.Window):
                 self.pipe_sprites.remove(pipe)
                 pipe_list = self.get_pipe_y()
                 flag = True
-                if pipe.center_y in pipe_list:
+            # Make sure destory all pipe in the same position
+                if pipe.center_y in pipe_list: 
                     flag = False
         if flag: self.is_add_pipe = True
 
         for enemy in self.enemy_sprites:
             if enemy.center_y < self.view_bottom:
                 enemy.kill()
-                #flag = True
 
 
-        print(self.player.center_y)
-        print(len(self.pipe_sprites), '+', len(self.enemy_sprites))
+        #print('num of pipe sprites:',len(self.pipe_sprites))
+        #print('num of enemy sprites:',len(self.enemy_sprites))
 
     def on_draw(self):
         """TODO: Docstring for on_drew.
@@ -208,7 +214,11 @@ class AB(arcade.Window):
 
         # Draw score on the screen
         score_text = f"Score: {self.score}"
-        arcade.draw_text(score_text, 10 , self.view_bottom + SCREEN_HEIGHT - 40, arcade.csscolor.RED, 18, font_name = "FreeSans")
+        max_score_text = f"Max score:{self.MAX_SCORE}"
+        total_game_num_text = f"Num of game:{self.TOTAL_GAME_NUM}"
+        arcade.draw_text(score_text, 10 , self.view_bottom + SCREEN_HEIGHT - 30, arcade.csscolor.RED, 18, font_name = "FreeSans")
+        arcade.draw_text(max_score_text, 10 , self.view_bottom + SCREEN_HEIGHT - 55, arcade.csscolor.RED, 18, font_name = "FreeSans")
+        arcade.draw_text(total_game_num_text, 10 , self.view_bottom + SCREEN_HEIGHT - 80, arcade.csscolor.RED, 18, font_name = "FreeSans")
 
     def create_pipe_and_enemy(self, pipe_height):
         """TODO: Create pipe every runing time.
@@ -257,12 +267,30 @@ class AB(arcade.Window):
         #print(pipe_y_list)
         return pipe_y_list
 
-        
+    def cal_score(self):
+        """ Calulate current score and max score.
+        :returns: TODO
+
+        """
+        # Cal score
+        if self.player.center_y > self.pipe_initial_position:
+            
+            self.SCORE = int((self.player.center_y - (self.pipe_initial_position) ) / PIPE_TWO_DISTANCE) + 1
+        #self.score = Score
+        if self.score < self.SCORE:
+            self.score = self.SCORE
+        else:
+            self.score = self.score
+        #print("score:", self.score)
+        if self.MAX_SCORE < self.score:
+            self.MAX_SCORE = self.score
+
+        return self.score, self.MAX_SCORE
 if __name__ == "__main__":
     ABC = AB()
     ABC.setup()
     arcade.run()
-    print("arcadeS")
+    print("Game Over")
     
         
         
