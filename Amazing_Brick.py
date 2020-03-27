@@ -7,7 +7,7 @@ import random
 import time
 
 SCREEN_WIDTH = 600
-SCREEN_HEIGHT = 800
+SCREEN_HEIGHT = 1000
 SCREEN_TITLE = "Amazing Brick"
 SCALING = 0.5
 # image size: 128x800
@@ -18,7 +18,7 @@ BALL_SOURCE = ":resources:images/enemies/bee.png"
 ENEMY_SOURCE = ":resources:images/space_shooter/meteorGrey_big3.png"
 PIPE_MAXINUM = 300
 PIPE_MININUM = 200
-PIPE_INTERVAL = 250
+PIPE_INTERVAL = 200
 PIPE_TWO_DISTANCE = 600
 BALL_MOVEMENT_SPEED = 5
 BALL_JUMP_SPEED = 20
@@ -132,8 +132,7 @@ class AB(arcade.Window):
     def on_update(self, delta_time: float):
         """TODO: Docstring for on_update.
 
-        :delta_time: TODO
-        :returns: TODO:resources:images/tiles/lavaTop_low.png
+        :returns:
 
         """
         if (self.player.collides_with_list(self.pipe_sprites) 
@@ -143,7 +142,6 @@ class AB(arcade.Window):
             time.sleep(0.5)
             self.setup()
             self.TOTAL_GAME_NUM += 1
-            #arcade.cleanup_texture_cache()
             #arcade.close_window()
         if self.player.left < 0:
             self.player.left = 0
