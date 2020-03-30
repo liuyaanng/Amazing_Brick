@@ -202,8 +202,9 @@ class AB(arcade.Window):
         if self.num % 10 == 0:
             image = arcade.get_image(width = int(SCREEN_WIDTH / SCALING) , height = int(SCREEN_HEIGHT / SCALING))
             image_name = str(self.num) + '.png'
-            image.save(image_name, 'PNG')
-            #print('save image succeed')
+            
+            print('save' + image_name + 'succeed')
+            return image
 
 
         #print('num of pipe sprites:',len(self.pipe_sprites))
