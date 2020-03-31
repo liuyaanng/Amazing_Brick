@@ -5,6 +5,7 @@
 import arcade
 import random
 import time
+import test
 
 SCREEN_WIDTH = 600
 SCREEN_HEIGHT = 1000
@@ -25,7 +26,6 @@ BALL_JUMP_SPEED = 20
 GRAVITY = 1
 SCORE = 0
 MAX_SCORE = 0
-
 
 
 # How many pixels to keep as a minium margin between character 
@@ -88,6 +88,7 @@ class AB(arcade.Window):
         
         self.SCORE = 0
         # Create two pipes when set up the game.
+        self.action = 0
         self.pipe_initial_position = SCREEN_HEIGHT - SCALING * IMAGE_HEIGHT
         self.create_pipe_and_enemy(self.pipe_initial_position)
         self.create_pipe_and_enemy(self.pipe_initial_position + PIPE_TWO_DISTANCE)
@@ -123,13 +124,30 @@ class AB(arcade.Window):
             symbol == arcade.key.N
             or symbol == arcade.key.LEFT
         ):
-            self.player.change_x = -BALL_MOVEMENT_SPEED * 0.5
+            pass
+            #self.player.change_x = -BALL_MOVEMENT_SPEED * 0.5
         if (
             symbol == arcade.key.I
             or symbol == arcade.key.RIGHT
         ):
-            self.player.change_x = BALL_MOVEMENT_SPEED * 0.5
+            pass
+            #self.player.change_x = BALL_MOVEMENT_SPEED * 0.5
+    def action_update_game(self, action):
+        """Use parameter action to update game.
 
+        :action: 
+        0 --> left
+        1 --> right
+        :returns: TODO
+
+        """
+        if action == 0:
+            self.player.change_y = BALL_JUMP_SPEED
+            self.player.change_x = -BALL_MOVEMENT_SPEED
+
+        if action == 1:
+            self.player.change_y = BALL_JUMP_SPEED
+            self.player.change_x = BALL_MOVEMENT_SPEED
 
     def on_update(self, delta_time: float):
         """TODO: Docstring for on_update.
@@ -137,6 +155,8 @@ class AB(arcade.Window):
         :returns:
 
         """
+        self.action = test.get_action()
+        self.action_update_game(self.action)
         if (self.player.collides_with_list(self.pipe_sprites) 
             or self.player.collides_with_list(self.enemy_sprites)
             or self.player.bottom < 0
@@ -202,8 +222,8 @@ class AB(arcade.Window):
         if self.num % 10 == 0:
             image = arcade.get_image(width = int(SCREEN_WIDTH / SCALING) , height = int(SCREEN_HEIGHT / SCALING))
             image_name = str(self.num) + '.png'
-            
-            print('save' + image_name + 'succeed')
+            #image.save(image_name,'PNG')
+            #print('save' + image_name + 'succeed')
             return image
 
 
@@ -295,11 +315,3 @@ class AB(arcade.Window):
             self.MAX_SCORE = self.score
 
         return self.score, self.MAX_SCORE
-if __name__ == "__main__":
-    ABC = AB()
-    ABC.setup()
-    arcade.run()
-    print("Game Over")
-    
-        
-        
