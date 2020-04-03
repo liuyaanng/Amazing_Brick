@@ -18,6 +18,7 @@ class ENV(arcade.Window):
         super().__init__(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
         
         # Set the empty sprite lists
+        self.player_sprites =arcade.SpriteList()
         self.pipe_sprites = arcade.SpriteList()
         self.enemy_sprites = arcade.SpriteList()
         # Save all sprite
@@ -34,6 +35,7 @@ class ENV(arcade.Window):
 
         """
         # remove all sprite
+        self.player_sprites =arcade.SpriteList()
         self.pipe_sprites = arcade.SpriteList()
         self.enemy_sprites = arcade.SpriteList()
         self.all_sprites = arcade.SpriteList()
@@ -42,7 +44,7 @@ class ENV(arcade.Window):
         self.player = Bee(BALL_SOURCE, SCALING)
         self.player.center_y = SCREEN_HEIGHT - TOP_VIEW_MARGIN
         self.player.center_x = SCREEN_WIDTH / 2
-        self.all_sprites.append(self.player)
+        self.player_sprites.append(self.player)
 
         # Create two pipes when set up the game.
         self.action = 0
@@ -156,7 +158,8 @@ class ENV(arcade.Window):
 
             # Set reward
             reward = 0.1
-
+        action = random.randint(0,3)
+        self.player.update(action)
         self.all_sprites.update()
         # if self.player.left < 0:
             # self.player.left = 0
@@ -228,6 +231,7 @@ class ENV(arcade.Window):
 
         """
         arcade.start_render()
+        self.player_sprites.draw()
         self.all_sprites.draw()
 
         # Draw score on the screen

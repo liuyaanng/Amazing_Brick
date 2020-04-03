@@ -30,7 +30,7 @@ class DQNagent():
 
 if __name__ == "__main__":
     A = DQNagent()
-    image_path = '/Users/kevin/Github/Myrep/Amazing_Brick/test.png'
+    image_path = '/Users/kevin/Pictures/pap.er/ZzUbvqIkwhU.jpg'
     image_size = [80,80]
     img = A.preprocess(image_path, image_size)
     print(img)

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 SCREEN_WIDTH = 600
-SCREEN_HEIGHT = 1000
+SCREEN_HEIGHT = 800
 SCREEN_TITLE = "Amazing Brick"
 SCALING = 0.5
 # image size: 128x800
