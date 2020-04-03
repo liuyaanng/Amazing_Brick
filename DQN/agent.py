@@ -21,7 +21,7 @@ class DQNagent():
         image = io.imread(image)
         image = skimage.color.rgb2gray(image)
         image = skimage.transform.resize(image, imagesize, mode = 'constant')
-        image = skimage.exposure.rescale_intensity(image, out_range=(0,255))
+        #image = skimage.exposure.rescale_intensity(image, out_range=(0,255))
         io.imshow(image)
         io.show()
         image = image / 255.0
@@ -30,7 +30,7 @@ class DQNagent():
 
 if __name__ == "__main__":
     A = DQNagent()
-    image_path = '/Users/kevin/Github/Myrep/Amazing_Brick/images/bee.png'
+    image_path = '/Users/kevin/Github/Myrep/Amazing_Brick/test.png'
     image_size = [80,80]
     img = A.preprocess(image_path, image_size)
     print(img)
