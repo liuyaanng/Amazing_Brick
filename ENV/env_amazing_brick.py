@@ -5,17 +5,20 @@
 import arcade
 import random
 import time
-import Amazing_brick 
+import numpy as np
 from ENV.sprites.Bee import *
 from ENV.cfg import *
 
+import sys
+sys.path.append("..")
+from DQN.agent import *
 class ENV(arcade.Window):
 
     """Amazing Brick game environment. """
 
     def __init__(self):
         """TODO: to be defined. """
-        super().__init__(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
+        super().__init__(SCREEN_WIDTH * SCALING, SCREEN_HEIGHT * SCALING, SCREEN_TITLE)
         
         # Set the empty sprite lists
         self.player_sprites =arcade.SpriteList()
@@ -151,13 +154,29 @@ class ENV(arcade.Window):
             or self.player.collides_with_list(self.enemy_sprites)
             or self.player.bottom < 0
             or self.view_bottom < 0):
-            time.sleep(0.5)
-            self.setup()
-            self.TOTAL_GAME_NUM += 1
+            #time.sleep(0.5)
+            #self.setup()
+           # self.TOTAL_GAME_NUM += 1
             #arcade.close_window()
 
             # Set reward
             reward = 0.1
+
+        # Get image frame
+        self.num += 1
+        # 1s save 6 images
+        if self.num % 60 == 0:
+            image = arcade.get_image(0,0,width = int(SCREEN_WIDTH) , height = int(SCREEN_HEIGHT))
+            print(image.size)
+            image_name = str(self.num) + '.png'
+            image.save(image_name,'PNG')
+            image = np.asarray(image)
+            print(image.shape)
+            #print('save',type(image), 'succeed')
+            #return image
+            #image = np.array(image)
+            DQNagent.preprocess(image_name,image)
+        print(self.num)
         action = random.randint(0,3)
         self.player.update(action)
         self.all_sprites.update()
@@ -212,14 +231,6 @@ class ENV(arcade.Window):
             if enemy.center_y < self.view_bottom:
                 enemy.kill()
 
-        # self.num += 1
-        # 1s save 6 images
-        # if self.num % 10 == 0:
-            # image = arcade.get_image(width = int(SCREEN_WIDTH / SCALING) , height = int(SCREEN_HEIGHT / SCALING))
-            # image_name = str(self.num) + '.png'
-            # image.save(image_name,'PNG')
-            # print('save' + image_name + 'succeed')
-            # return image
 
 
         #print('num of pipe sprites:',len(self.pipe_sprites))
