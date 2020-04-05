@@ -53,7 +53,7 @@ class ENV(arcade.Window):
         self.action = 0
         self.pipe_initial_position = SCREEN_HEIGHT - SCALING * IMAGE_HEIGHT
         self.create_pipe_and_enemy(self.pipe_initial_position)
-        #self.create_pipe_and_enemy(self.pipe_initial_position + PIPE_TWO_DISTANCE)
+        self.create_pipe_and_enemy(self.pipe_initial_position + PIPE_TWO_DISTANCE)
 
         # the left pipe's right position
         self.pipe_position = 0
@@ -154,9 +154,9 @@ class ENV(arcade.Window):
             or self.player.collides_with_list(self.enemy_sprites)
             or self.player.bottom < 0
             or self.view_bottom < 0):
-            #time.sleep(0.5)
-            #self.setup()
-           # self.TOTAL_GAME_NUM += 1
+            time.sleep(0.5)
+            self.setup()
+            self.TOTAL_GAME_NUM += 1
             #arcade.close_window()
 
             # Set reward
@@ -166,16 +166,16 @@ class ENV(arcade.Window):
         self.num += 1
         # 1s save 6 images
         if self.num % 10 == 0:
-            image = arcade.get_image(0,0,width = int(SCREEN_WIDTH * RETINA_SCALING) , height = int(SCREEN_HEIGHT * RETINA_SCALING))
+            image = np.array(arcade.get_image(0,0,width = int(SCREEN_WIDTH * RETINA_SCALING) , height = int(SCREEN_HEIGHT * RETINA_SCALING)))
             image_name = str(self.num) + '.png'
-            image.save(image_name,'PNG')
+            # image.save(image_name,'PNG')
             #print('save',type(image), 'succeed')
             #return image
             #image = np.array(image)
-            #DQNagent.preprocess(image_name,image)
+            DQNagent.preprocess(image_name,image)
         action = random.randint(0,3)
         self.player.update(action)
-        #self.all_sprites.update()
+        self.all_sprites.update()
         # if self.player.left < 0:
             # self.player.left = 0
         # if self.player.right > SCREEN_WIDTH:
@@ -229,8 +229,8 @@ class ENV(arcade.Window):
 
 
 
-        #print('num of pipe sprites:',len(self.pipe_sprites))
-        #print('num of enemy sprites:',len(self.enemy_sprites))
+        # print('num of pipe sprites:',len(self.pipe_sprites))
+        # print('num of enemy sprites:',len(self.enemy_sprites))
 
     def on_draw(self):
         """TODO: Docstring for on_drew.
