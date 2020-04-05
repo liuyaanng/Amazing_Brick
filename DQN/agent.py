@@ -17,13 +17,11 @@ class DQNagent():
     """Preprocess the image"""
     def preprocess(image_name,image):
         image = skimage.color.rgb2gray(image)
-        print('gary', image.shape)
-        #image = skimage.transform.resize(image, img_size, mode = 'constant')
-        print('resize', image.shape)
-        #image = skimage.exposure.rescale_intensity(image, out_range=(0,255))
+        image = skimage.transform.resize(image, img_size, mode = 'constant')
+        image = skimage.exposure.rescale_intensity(image, out_range=(0,255))
         #io.imshow(image)
         #io.show()
-        #io.imsave(image_name,image)
+        io.imsave(image_name,image)
 
 
 # if __name__ == "__main__":
