@@ -33,6 +33,7 @@ class ENV(arcade.Window):
         self.num = 0
         
 
+        self.agent = DQNagent()
     def setup(self): 
         """TODO: Set up a new game.
         :returns: none
@@ -85,7 +86,8 @@ class ENV(arcade.Window):
         # Set init reward = 0
         self.reward = 0
 
-        is_game_running = True
+        self.is_game_running = True
+
     def on_key_press(self, symbol, modifiers):
         """TODO: Docstring for on_key_press.
 
@@ -187,16 +189,16 @@ class ENV(arcade.Window):
             #print('save',type(image), 'succeed')
             #return image
             #image = np.array(image)
-            image = DQNagent.preprocess(image)
+            #image = DQNagent.preprocess(image)
         
-        # record the action and corrsponding reward
-        agent.record(action, reward, score, is_game_running, image)
+            # record the action and corrsponding reward
+            self.agent.record(self.action, reward, score, self.is_game_running, image)
 
-        # make decision
-        action = agent.NextAction(reward)
+            # make decision
+            action = self.agent.NextAction(reward)
 
-        # Update game with action
-        self.player.update(action)
+            # Update game with action
+            self.player.update(action)
         self.all_sprites.update()
         # if self.player.left < 0:
             # self.player.left = 0
