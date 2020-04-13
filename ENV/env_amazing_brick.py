@@ -160,7 +160,7 @@ class ENV(arcade.Window):
         # update physics engine
         self.physics_engine.update()
         
-        reward = 0.1
+        reward = 0.0
         
         # get reward form cal score
         score, reward = self.cal_score()
@@ -174,7 +174,7 @@ class ENV(arcade.Window):
             or self.view_bottom < 0):
             # time.sleep(0.5)
             self.setup()
-            # self.TOTAL_GAME_NUM += 1
+            self.TOTAL_GAME_NUM += 1
             is_game_running = False
             # Set reward
             reward = -1
@@ -182,7 +182,7 @@ class ENV(arcade.Window):
         # Get image frame
         self.num += 1
         # 1s save 6 images
-        if self.num % 10 == 0:
+        if self.num % 3 == 0:
             image = np.array(arcade.get_image(0,0,width = int(SCREEN_WIDTH * RETINA_SCALING) , height = int(SCREEN_HEIGHT * RETINA_SCALING)))
             image_name = str(self.num) + '.png'
             # image.save(image_name,'PNG')
