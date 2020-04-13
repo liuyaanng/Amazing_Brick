@@ -31,8 +31,9 @@ class ENV(arcade.Window):
         self.TOTAL_GAME_NUM = 0
         # for save image
         self.num = 0
+        
 
-    def setup(self):
+    def setup(self): 
         """TODO: Set up a new game.
         :returns: none
 
@@ -50,7 +51,6 @@ class ENV(arcade.Window):
         self.player_sprites.append(self.player)
 
         # Create two pipes when set up the game.
-        self.action = 0
         self.pipe_initial_position = SCREEN_HEIGHT - SCALING * IMAGE_HEIGHT
         self.create_pipe_and_enemy(self.pipe_initial_position)
         self.create_pipe_and_enemy(self.pipe_initial_position + PIPE_TWO_DISTANCE)
@@ -77,7 +77,15 @@ class ENV(arcade.Window):
 
         # Create the 'physics engine'
         self.physics_engine = arcade.PhysicsEnginePlatformer(self.player, self.wall, GRAVITY)
+        
+        # DQN config
+        # Set init action = None
+        self.action = 2
 
+        # Set init reward = 0
+        self.reward = 0
+
+        is_game_running = True
     def on_key_press(self, symbol, modifiers):
         """TODO: Docstring for on_key_press.
 
@@ -122,6 +130,7 @@ class ENV(arcade.Window):
         :action: 
         0 --> left
         1 --> right
+        2 --> None
         :returns: TODO
 
         """
@@ -145,22 +154,28 @@ class ENV(arcade.Window):
         #self.action = Amazing_brick.get_action()
         #print(action)
         #self.action_update_game(self.action)
-        
+
         # update physics engine
         self.physics_engine.update()
+        
+        reward = 0.1
+        
+        # get reward form cal score
+        score, reward = self.cal_score()
 
+        # action update game
+        self.action_update_game(self.action)
         # Restart the game when collode
         if (self.player.collides_with_list(self.pipe_sprites) 
             or self.player.collides_with_list(self.enemy_sprites)
             or self.player.bottom < 0
             or self.view_bottom < 0):
-            time.sleep(0.5)
+            # time.sleep(0.5)
             self.setup()
-            self.TOTAL_GAME_NUM += 1
-            #arcade.close_window()
-
+            # self.TOTAL_GAME_NUM += 1
+            is_game_running = False
             # Set reward
-            reward = 0.1
+            reward = -1
 
         # Get image frame
         self.num += 1
@@ -172,8 +187,15 @@ class ENV(arcade.Window):
             #print('save',type(image), 'succeed')
             #return image
             #image = np.array(image)
-            DQNagent.preprocess(image_name,image)
-        action = random.randint(0,3)
+            image = DQNagent.preprocess(image)
+        
+        # record the action and corrsponding reward
+        agent.record(action, reward, score, is_game_running, image)
+
+        # make decision
+        action = agent.NextAction(reward)
+
+        # Update game with action
         self.player.update(action)
         self.all_sprites.update()
         # if self.player.left < 0:
@@ -181,8 +203,6 @@ class ENV(arcade.Window):
         # if self.player.right > SCREEN_WIDTH:
             # self.player.right = SCREEN_WIDTH
         
-        # calucate current score and max score
-        self.score, self.MAX_SCORE = self.cal_score()
 
         # Manage Scrolling
         changed = False
@@ -306,29 +326,18 @@ class ENV(arcade.Window):
         :returns: TODO
 
         """
-        # # Cal score
-        # if self.player.center_y > self.pipe_initial_position:
-            # self.SCORE = int((self.player.center_y - (self.pipe_initial_position) ) / PIPE_TWO_DISTANCE) + 1
-        # #self.score = Score
-        # if self.score < self.SCORE:
-            # self.score = self.SCORE
-        # else:
-            # self.score = self.score
-        # #print("score:", self.score)
-        # if self.MAX_SCORE < self.score:
-            # self.MAX_SCORE = self.score
-
-        # return self.score, self.MAX_SCORE
         # Cal score
         if self.player.center_y > self.pipe_initial_position:
             self.score = int((self.player.center_y - (self.pipe_initial_position) ) / PIPE_TWO_DISTANCE) + 1
         #self.score = Score
         if self.SCORE < self.score:
             self.SCORE = self.score
+            self.reward = 1
         else:
             self.SCORE = self.SCORE
+            self.reward = 0.1
         #print("score:", self.score)
         if self.MAX_SCORE < self.SCORE:
             self.MAX_SCORE = self.SCORE
 
-        return self.SCORE, self.MAX_SCORE
+        return self.SCORE, self.reward
