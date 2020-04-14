@@ -9,6 +9,7 @@ import skimage.transform
 from skimage import io
 import numpy as np
 import random
+import pickle
 from collections import deque
 from tensorflow.keras.optimizers import Adam
 from DQN.DQN import *
@@ -24,10 +25,10 @@ class DQNagent():
         self.init_epsilon = 0.1
         self.final_epsilon = 1e-4
 
-        self.num_observes = 320
-        self.num_explores = 3e3
+        self.num_observes = 3200
+        self.num_explores = 3e5
         self.num_iters = 0
-        self.save_interval = 5000
+        self.save_interval = 500
 
         self.num_actions = 3
         self.num_input_frames = 4
@@ -81,7 +82,8 @@ class DQNagent():
             loss = self.DQN_model.train_on_batch(states, targets)
 
             if self.num_iters % self.save_interval == 0:
-                self.SaveModel(self.backup_path)
+                backup_path = 'checkpoints/dqn.h5'
+                self.SaveModel(backup_path)
 
 
         print('STATE: train, ITER: %s, EPSILON: %s, ACTION: %s, REWARD: %s, LOSS: %s' % (self.num_iters, self.epsilon, action, reward, float(loss)))
@@ -90,9 +92,22 @@ class DQNagent():
 
         return action
 
+    def SaveModel(self, modelpath):
+        """TODO: Save model to modelpath.
 
+        :modelpath: TODO
+        :returns: TODO
 
-
+        """
+        self.DQN_model.save_weights(modelpath, overwrite = True)
+        data_dict = {
+                        'num_iters': self.num_iters,
+                        'epsilon': self.epsilon,
+                        'replay_memory_record': self.replay_memory_record
+                    }
+        with open(modelpath.replace('h5', 'pkl'), 'wb') as f:
+            pickle.dump(data_dict, f)
+        print('[INFO]: save checkpoints into %s and %s' % (modelpath, modelpath.replace('h5', 'pkl')))
 
     def record(self, action, reward, score, is_game_running, image):
         """TODO: Docstring for record.

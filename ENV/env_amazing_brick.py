@@ -182,7 +182,7 @@ class ENV(arcade.Window):
         # Get image frame
         self.num += 1
         # 1s save 6 images
-        if self.num % 3 == 0:
+        if self.num % 1 == 0:
             image = np.array(arcade.get_image(0,0,width = int(SCREEN_WIDTH * RETINA_SCALING) , height = int(SCREEN_HEIGHT * RETINA_SCALING)))
             image_name = str(self.num) + '.png'
             # image.save(image_name,'PNG')
