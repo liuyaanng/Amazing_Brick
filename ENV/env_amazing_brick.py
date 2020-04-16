@@ -16,7 +16,7 @@ class ENV(arcade.Window):
 
     """Amazing Brick game environment. """
 
-    def __init__(self):
+    def __init__(self, agent):
         """TODO: to be defined. """
         super().__init__(SCREEN_WIDTH * RETINA_SCALING, SCREEN_HEIGHT * RETINA_SCALING, SCREEN_TITLE)
         
@@ -33,7 +33,7 @@ class ENV(arcade.Window):
         self.num = 0
         
 
-        self.agent = DQNagent()
+        self.agent = agent
     def setup(self): 
         """TODO: Set up a new game.
         :returns: none
@@ -166,7 +166,7 @@ class ENV(arcade.Window):
         score, reward = self.cal_score()
 
         # action update game
-        self.action_update_game(self.action)
+        #self.action_update_game(self.action)
         # Restart the game when collode
         if (self.player.collides_with_list(self.pipe_sprites) 
             or self.player.collides_with_list(self.enemy_sprites)
@@ -179,26 +179,22 @@ class ENV(arcade.Window):
             # Set reward
             reward = -1
 
-        # Get image frame
-        self.num += 1
-        # 1s save 6 images
-        if self.num % 1 == 0:
-            image = np.array(arcade.get_image(0,0,width = int(SCREEN_WIDTH * RETINA_SCALING) , height = int(SCREEN_HEIGHT * RETINA_SCALING)))
-            image_name = str(self.num) + '.png'
-            # image.save(image_name,'PNG')
-            #print('save',type(image), 'succeed')
-            #return image
-            #image = np.array(image)
-            #image = DQNagent.preprocess(image)
-        
-            # record the action and corrsponding reward
-            self.agent.record(self.action, reward, score, self.is_game_running, image)
+        image = np.array(arcade.get_image(0,0,width = int(SCREEN_WIDTH * RETINA_SCALING) , height = int(SCREEN_HEIGHT * RETINA_SCALING)))
+        image_name = str(self.num) + '.png'
+        # image.save(image_name,'PNG')
+        #print('save',type(image), 'succeed')
+        #return image
+        #image = np.array(image)
+        #image = DQNagent.preprocess(image)
+    
+        # record the action and corrsponding reward
+        self.agent.record(self.action, reward, score, self.is_game_running, image)
 
-            # make decision
-            action = self.agent.NextAction(reward)
+        # make decision
+        action = self.agent.NextAction(reward)
 
-            # Update game with action
-            self.player.update(action)
+        # Update game with action
+        self.player.update(action)
         self.all_sprites.update()
         # if self.player.left < 0:
             # self.player.left = 0
@@ -266,12 +262,12 @@ class ENV(arcade.Window):
         #self.all_sprites.draw()
 
         # Draw score on the screen
-        score_text = f"Score: {self.score}"
+        # score_text = f"Score: {self.score}"
         max_score_text = f"Max score:{self.MAX_SCORE}"
-        total_game_num_text = f"Num of game:{self.TOTAL_GAME_NUM}"
-        arcade.draw_text(score_text, 10 , self.view_bottom + SCREEN_HEIGHT - 30, arcade.csscolor.RED, 18, font_name = "FreeSans")
-        arcade.draw_text(max_score_text, 10 , self.view_bottom + SCREEN_HEIGHT - 55, arcade.csscolor.RED, 18, font_name = "FreeSans")
-        arcade.draw_text(total_game_num_text, 10 , self.view_bottom + SCREEN_HEIGHT - 80, arcade.csscolor.RED, 18, font_name = "FreeSans")
+        # total_game_num_text = f"Num of game:{self.TOTAL_GAME_NUM}"
+        # arcade.draw_text(score_text, 10 , self.view_bottom + SCREEN_HEIGHT - 30, arcade.csscolor.RED, 18, font_name = "FreeSans")
+        arcade.draw_text(max_score_text, 10 , self.view_bottom + SCREEN_HEIGHT - 55, arcade.csscolor.RED, 5, font_name = "FreeSans")
+        # arcade.draw_text(total_game_num_text, 10 , self.view_bottom + SCREEN_HEIGHT - 80, arcade.csscolor.RED, 18, font_name = "FreeSans")
 
     def create_pipe_and_enemy(self, pipe_height):
         """TODO: Create pipe every runing time.

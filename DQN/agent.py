@@ -17,9 +17,11 @@ class DQNagent():
 
     """Docstring for DQNagent. """
 
-    def __init__(self, **kwargs):
+    def __init__(self, mode, backup_path, **kwargs):
         """TODO: to be defined. """
         
+        self.mode = mode
+        self.backup_path = backup_path
         self.discount_factor = 0.99
         self.epsilon = 0.1
         self.init_epsilon = 0.1
@@ -91,6 +93,27 @@ class DQNagent():
 
 
         return action
+    
+    def LoadModel(self, modelpath):
+        """TODO: Docstring for LoadModel.
+        :returns: TODO
+
+        """
+        if self.mode == 'train':
+            print('[INFO]: load checkpoints from %s and %s', (modelpath, modelpath.replace('h5', 'pkl')))
+            self.DQN_model.load_weights(modelpath)
+            data_dict = pickle.load(open(modelpath.replace('h5', 'pkl'), 'rb'))
+            #self.max_score = data_dict['max_score']
+            self.epsilon = data_dict['epsilon']
+            self.num_iters = data_dict['num_iters']
+            self.replay_memory_record = data_dict['replay_memory_record']
+        else:
+            print('[INFO]: Load checkpoints from %s' % modelpath)
+            self.DQN_model.load_weights(modelpath)
+            self.max_score = 0
+            self.epsilon = self.final_epsilon
+            self.num_iters = 0
+            self.replay_memory_record = deque()
 
     def SaveModel(self, modelpath):
         """TODO: Save model to modelpath.
