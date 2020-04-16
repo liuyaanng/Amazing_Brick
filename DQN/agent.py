@@ -89,7 +89,7 @@ class DQNagent():
                 self.SaveModel(backup_path)
 
         # print some infomations
-        if mode == 'train':
+        if self.mode == 'train':
             print('STATE: train, ITER: %s, EPSILON: %s, ACTION: %s, REWARD: %s, LOSS: %s, MAX_SCORE: %s' % (self.num_iters, self.epsilon, action, reward, float(loss), self.max_score))
         else:
             print('STATE: test, ACTION: %s, MAX_SCORE: %s' % (action, self.max_score))

@@ -173,7 +173,7 @@ class ENV(arcade.Window):
             or self.player.bottom < 0
             or self.view_bottom < 0):
             # time.sleep(0.5)
-            #self.setup()
+            self.setup()
             self.TOTAL_GAME_NUM += 1
             is_game_running = False
             # Set reward
@@ -190,9 +190,8 @@ class ENV(arcade.Window):
         self.agent.record(self.action, reward, score, max_score, self.is_game_running, image)
 
         # make decision
-        # action = self.agent.NextAction(reward)
+        action = self.agent.NextAction(reward)
         
-        action = 2
         # Update game with action
         self.player.update(action)
         self.all_sprites.update()
