@@ -28,7 +28,7 @@ class DQNagent():
         self.final_epsilon = 1e-4
 
         self.num_observes = 3200
-        self.num_explores = 3e5
+        self.num_explores = 3e6
         self.num_iters = 0
         self.save_interval = 500
 
@@ -41,6 +41,7 @@ class DQNagent():
 
         self.batch_size = 32
 
+        self.max_score = 0
 
         # create q network
         self.DQN_model = Build_Q_network(image_size = self.image_size, channels = self.num_input_frames, num_actions = self.num_actions)
@@ -70,7 +71,7 @@ class DQNagent():
 
         # Train model
         loss = 0
-        if self.num_iters > self.num_observes:
+        if self.mode == 'train' and self.num_iters > self.num_observes:
             # Sample values
             minibatch = random.sample(self.replay_memory_record, self.batch_size)
 
@@ -87,10 +88,11 @@ class DQNagent():
                 backup_path = 'checkpoints/dqn.h5'
                 self.SaveModel(backup_path)
 
-
-        print('STATE: train, ITER: %s, EPSILON: %s, ACTION: %s, REWARD: %s, LOSS: %s' % (self.num_iters, self.epsilon, action, reward, float(loss)))
-
-
+        # print some infomations
+        if mode == 'train':
+            print('STATE: train, ITER: %s, EPSILON: %s, ACTION: %s, REWARD: %s, LOSS: %s, MAX_SCORE: %s' % (self.num_iters, self.epsilon, action, reward, float(loss), self.max_score))
+        else:
+            print('STATE: test, ACTION: %s, MAX_SCORE: %s' % (action, self.max_score))
 
         return action
     
@@ -103,7 +105,7 @@ class DQNagent():
             print('[INFO]: load checkpoints from %s and %s', (modelpath, modelpath.replace('h5', 'pkl')))
             self.DQN_model.load_weights(modelpath)
             data_dict = pickle.load(open(modelpath.replace('h5', 'pkl'), 'rb'))
-            #self.max_score = data_dict['max_score']
+            self.max_score = data_dict['max_score']
             self.epsilon = data_dict['epsilon']
             self.num_iters = data_dict['num_iters']
             self.replay_memory_record = data_dict['replay_memory_record']
@@ -126,13 +128,14 @@ class DQNagent():
         data_dict = {
                         'num_iters': self.num_iters,
                         'epsilon': self.epsilon,
-                        'replay_memory_record': self.replay_memory_record
+                        'replay_memory_record': self.replay_memory_record,
+                        'max_score': self.max_score
                     }
         with open(modelpath.replace('h5', 'pkl'), 'wb') as f:
             pickle.dump(data_dict, f)
         print('[INFO]: save checkpoints into %s and %s' % (modelpath, modelpath.replace('h5', 'pkl')))
 
-    def record(self, action, reward, score, is_game_running, image):
+    def record(self, action, reward, score, max_score, is_game_running, image):
         """TODO: Docstring for record.
 
         :action: TODO
@@ -142,7 +145,7 @@ class DQNagent():
         :returns: TODO
 
         """
-
+        self.max_score = max_score
         # preprocess the image. image: 80x80
         image = self.preprocess(image, self.image_size)
         
@@ -163,7 +166,8 @@ class DQNagent():
 
         if len(self.replay_memory_record) > self.replay_memory_size:
             self.replay_memory_record.popleft()
-
+        
+        
 
     """Preprocess the image"""
     def preprocess(self, image, image_size):

@@ -163,7 +163,7 @@ class ENV(arcade.Window):
         reward = 0.0
         
         # get reward form cal score
-        score, reward = self.cal_score()
+        score, max_score, reward = self.cal_score()
 
         # action update game
         #self.action_update_game(self.action)
@@ -173,14 +173,13 @@ class ENV(arcade.Window):
             or self.player.bottom < 0
             or self.view_bottom < 0):
             # time.sleep(0.5)
-            self.setup()
+            #self.setup()
             self.TOTAL_GAME_NUM += 1
             is_game_running = False
             # Set reward
             reward = -1
 
         image = np.array(arcade.get_image(0,0,width = int(SCREEN_WIDTH * RETINA_SCALING) , height = int(SCREEN_HEIGHT * RETINA_SCALING)))
-        image_name = str(self.num) + '.png'
         # image.save(image_name,'PNG')
         #print('save',type(image), 'succeed')
         #return image
@@ -188,11 +187,12 @@ class ENV(arcade.Window):
         #image = DQNagent.preprocess(image)
     
         # record the action and corrsponding reward
-        self.agent.record(self.action, reward, score, self.is_game_running, image)
+        self.agent.record(self.action, reward, score, max_score, self.is_game_running, image)
 
         # make decision
-        action = self.agent.NextAction(reward)
-
+        # action = self.agent.NextAction(reward)
+        
+        action = 2
         # Update game with action
         self.player.update(action)
         self.all_sprites.update()
@@ -266,7 +266,7 @@ class ENV(arcade.Window):
         max_score_text = f"Max score:{self.MAX_SCORE}"
         # total_game_num_text = f"Num of game:{self.TOTAL_GAME_NUM}"
         # arcade.draw_text(score_text, 10 , self.view_bottom + SCREEN_HEIGHT - 30, arcade.csscolor.RED, 18, font_name = "FreeSans")
-        arcade.draw_text(max_score_text, 10 , self.view_bottom + SCREEN_HEIGHT - 55, arcade.csscolor.RED, 5, font_name = "FreeSans")
+        arcade.draw_text(max_score_text, 10 , self.view_bottom + SCREEN_HEIGHT - 55, arcade.csscolor.RED, 10, font_name = "FreeSans")
         # arcade.draw_text(total_game_num_text, 10 , self.view_bottom + SCREEN_HEIGHT - 80, arcade.csscolor.RED, 18, font_name = "FreeSans")
 
     def create_pipe_and_enemy(self, pipe_height):
@@ -304,7 +304,7 @@ class ENV(arcade.Window):
             self.enemy_position = random.randint(self.pipe_position + 25, self.pipe_position + PIPE_INTERVAL - 25)
             enemy = arcade.Sprite(ENEMY_SOURCE, SCALING)
             enemy.center_x = self.enemy_position
-            enemy.center_y = pipe_height + 150 + i * 250
+            enemy.center_y = pipe_height + 130 + i * 130
             self.enemy_sprites.append(enemy)
             self.all_sprites.append(enemy)
         
@@ -338,4 +338,4 @@ class ENV(arcade.Window):
         if self.MAX_SCORE < self.SCORE:
             self.MAX_SCORE = self.SCORE
 
-        return self.SCORE, self.reward
+        return self.SCORE, self.MAX_SCORE, self.reward

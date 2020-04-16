@@ -22,7 +22,7 @@ def ParseArgs():
     return args
 def play_Amazing_Brick():
     # Step1: init BrainDQN
-    #brain = BrainDQN()
+#brain = BrainDQN()
 
     args = ParseArgs()
     mode = args.mode.lower()
