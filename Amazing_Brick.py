@@ -40,7 +40,7 @@ def play_Amazing_Brick():
             agent.LoadModel(model_path)
     # Step2: init Amazing Brick game
 
-amazingbrick = game.ENV(agent)
+    amazingbrick = game.ENV(agent, model_path)
     amazingbrick.setup()
     arcade.run()
 
