@@ -176,5 +176,6 @@ class DQNagent():
         image = skimage.transform.resize(image, image_size, mode = 'constant')
         image = skimage.exposure.rescale_intensity(image, out_range=(0, 255))
         image = image / 255.0
+        # io.imsave('test.jpg', image)
         return image
         # return a ndarray with shape 2

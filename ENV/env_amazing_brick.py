@@ -16,7 +16,7 @@ class ENV(arcade.Window):
 
     """Amazing Brick game environment. """
 
-    def __init__(self, agent):
+    def __init__(self, agent, modelpath):
         """TODO: to be defined. """
         super().__init__(SCREEN_WIDTH * RETINA_SCALING, SCREEN_HEIGHT * RETINA_SCALING, SCREEN_TITLE)
         
@@ -34,6 +34,7 @@ class ENV(arcade.Window):
         
 
         self.agent = agent
+        self.modelpath = modelpath
     def setup(self): 
         """TODO: Set up a new game.
         :returns: none
@@ -98,6 +99,7 @@ class ENV(arcade.Window):
         """
         if symbol == arcade.key.Q:
             arcade.close_window()
+            self.agent.SaveModel(self.modelpath)
         
         if symbol == arcade.key.N or symbol == arcade.key.LEFT:
             self.player.change_y = BALL_JUMP_SPEED
