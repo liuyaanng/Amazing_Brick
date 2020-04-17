@@ -30,7 +30,7 @@ class DQNagent():
         self.num_observes = 3200
         self.num_explores = 3e6
         self.num_iters = 0
-        self.save_interval = 500
+        self.save_interval = 5000
 
         self.num_actions = 3
         self.num_input_frames = 4
