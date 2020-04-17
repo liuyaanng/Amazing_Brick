@@ -8,6 +8,7 @@ import skimage.exposure
 import skimage.transform
 from skimage import io
 import numpy as np
+import matplotlib.pyplot as plt
 import random
 import pickle
 from collections import deque
@@ -28,20 +29,22 @@ class DQNagent():
         self.final_epsilon = 1e-4
 
         self.num_observes = 3200
-        self.num_explores = 3e6
+        self.num_explores = 3e5
         self.num_iters = 0
         self.save_interval = 5000
 
         self.num_actions = 3
         self.num_input_frames = 4
         self.replay_memory_record = deque()
-        self.replay_memory_size = 5e4
+        self.replay_memory_size = 5e3
         self.image_size = (80, 80)
         self.input_image = None
 
         self.batch_size = 32
 
         self.max_score = 0
+
+        self.loss_array = np.array(0)
 
         # create q network
         self.DQN_model = Build_Q_network(image_size = self.image_size, channels = self.num_input_frames, num_actions = self.num_actions)
@@ -67,6 +70,7 @@ class DQNagent():
             action = random.choice([0, 1, 2])
         else:
             q = self.DQN_model.predict(self.input_image)
+            # print(q)
             action = np.argmax(q)
 
         # Train model
@@ -83,10 +87,11 @@ class DQNagent():
             targets = self.DQN_model.predict(states_next)
             targets[range(32), actions] = rewards + self.discount_factor *np.max(self.DQN_model.predict(states_next), axis = 1) * is_game_running
             loss = self.DQN_model.train_on_batch(states, targets)
+            self.loss_array = np.append(self.loss_array, loss)
 
             if self.num_iters % self.save_interval == 0:
-                backup_path = 'checkpoints/dqn.h5'
-                self.SaveModel(backup_path)
+                self.SaveModel(self.backup_path)
+                self.DrawLossFunc(self.loss_array)
 
         # print some infomations
         if self.mode == 'train':
@@ -96,6 +101,20 @@ class DQNagent():
 
         return action
     
+    def DrawLossFunc(self, loss):
+        """TODO: Docstring for DrawLossFunc.
+
+        :loss: TODO
+        :returns: TODO
+
+        """
+        if self.mode == 'train':
+            plt.plot(loss)
+            plt.ylabel('Loss value')
+            plt.xlabel('iters')
+            plt.savefig('loss_function.jpg')
+            plt.show()
+
     def LoadModel(self, modelpath):
         """TODO: Docstring for LoadModel.
         :returns: TODO
@@ -104,7 +123,7 @@ class DQNagent():
         if self.mode == 'train':
             print('[INFO]: load checkpoints from %s and %s', (modelpath, modelpath.replace('h5', 'pkl')))
             self.DQN_model.load_weights(modelpath)
-            data_dict = pickle.load(open(modelpath.replace('h5', 'pkl'), 'rb'))
+            data_dict = pickle.loads(open(modelpath.replace('h5', 'pkl'), 'rb'))
             self.max_score = data_dict['max_score']
             self.epsilon = data_dict['epsilon']
             self.num_iters = data_dict['num_iters']

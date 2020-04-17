@@ -6,7 +6,7 @@ SCREEN_HEIGHT = 400
 SCREEN_TITLE = "Amazing Brick"
 SCALING = 0.25
 # Bugs: when SCALING != 0.5, it will create 3 times after the first pipe
-RETINA_SCALING = 0.5
+RETINA_SCALING = 1
 # image size: 128x800
 IMAGE_WIDTH = 800
 IMAGE_HEIGHT = 128
