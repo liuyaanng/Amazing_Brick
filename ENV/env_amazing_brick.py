@@ -181,22 +181,6 @@ class ENV(arcade.Window):
             # Set reward
             reward = -1
 
-        image = np.array(arcade.get_image(0,0,width = int(SCREEN_WIDTH * RETINA_SCALING) , height = int(SCREEN_HEIGHT * RETINA_SCALING)))
-        # image.save(image_name,'PNG')
-        #print('save',type(image), 'succeed')
-        #return image
-        #image = np.array(image)
-        #image = DQNagent.preprocess(image)
-    
-        # record the action and corrsponding reward
-        self.agent.record(self.action, reward, score, max_score, self.is_game_running, image)
-
-        # make decision
-        action = self.agent.NextAction(reward)
-        
-        # Update game with action
-        self.player.update(action)
-        self.all_sprites.update()
         # if self.player.left < 0:
             # self.player.left = 0
         # if self.player.right > SCREEN_WIDTH:
@@ -246,10 +230,25 @@ class ENV(arcade.Window):
             if enemy.center_y < self.view_bottom:
                 enemy.kill()
 
-
-
         # print('num of pipe sprites:',len(self.pipe_sprites))
         # print('num of enemy sprites:',len(self.enemy_sprites))
+
+        image = np.array(arcade.get_image(0,0,width = int(SCREEN_WIDTH * RETINA_SCALING) , height = int(SCREEN_HEIGHT * RETINA_SCALING)))
+        # image.save(image_name,'PNG')
+        #print('save',type(image), 'succeed')
+        #return image
+        #image = np.array(image)
+        #image = DQNagent.preprocess(image)
+    
+        # record the action and corrsponding reward
+        self.agent.record(self.action, reward, score, max_score, self.is_game_running, image)
+
+        # make decision
+        action = self.agent.NextAction(reward)
+        
+        # Update game with action
+        self.player.update(action)
+        self.all_sprites.update()
 
     def on_draw(self):
         """TODO: Docstring for on_drew.

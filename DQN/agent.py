@@ -113,7 +113,7 @@ class DQNagent():
             plt.ylabel('Loss value')
             plt.xlabel('iters')
             plt.savefig('loss_function.jpg')
-            plt.show()
+            # plt.show()
 
     def LoadModel(self, modelpath):
         """TODO: Docstring for LoadModel.
