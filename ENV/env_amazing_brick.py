@@ -82,7 +82,7 @@ class ENV(arcade.Window):
         
         # DQN config
         # Set init action = None
-        self.action = 2
+        self.action = 0
 
         # Set init reward = 0
         self.reward = 0

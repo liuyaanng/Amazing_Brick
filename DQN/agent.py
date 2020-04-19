@@ -28,7 +28,7 @@ class DQNagent():
         self.init_epsilon = 0.1
         self.final_epsilon = 1e-4
 
-        self.num_observes = 5000
+        self.num_observes = 50
         self.num_explores = 3e5
         self.num_iters = 0
         self.save_interval = 5000
@@ -85,6 +85,7 @@ class DQNagent():
             states = np.concatenate(states)
             states_next = np.concatenate(states_next)
             targets = self.DQN_model.predict(states_next)
+            # print(targets.shape)
             targets[range(32), actions] = rewards + self.discount_factor *np.max(self.DQN_model.predict(states_next), axis = 1) * is_game_running
             loss = self.DQN_model.train_on_batch(states, targets)
             self.loss_array = np.append(self.loss_array, loss)
