@@ -28,7 +28,7 @@ class DQNagent():
         self.init_epsilon = 0.1
         self.final_epsilon = 1e-4
 
-        self.num_observes = 3200
+        self.num_observes = 5000
         self.num_explores = 3e5
         self.num_iters = 0
         self.save_interval = 5000
@@ -36,7 +36,7 @@ class DQNagent():
         self.num_actions = 2
         self.num_input_frames = 4
         self.replay_memory_record = deque()
-        self.replay_memory_size = 5e3
+        self.replay_memory_size = 3e4
         self.image_size = (80, 80)
         self.input_image = None
 
