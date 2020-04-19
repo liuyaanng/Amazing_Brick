@@ -244,7 +244,7 @@ class ENV(arcade.Window):
         self.agent.record(self.action, reward, score, max_score, self.is_game_running, image)
 
         # make decision
-        action = self.agent.NextAction(reward)
+        action = self.agent.NextAction(reward, self.TOTAL_GAME_NUM)
         
         # Update game with action
         self.player.update(action)

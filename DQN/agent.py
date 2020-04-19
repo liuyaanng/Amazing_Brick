@@ -33,7 +33,7 @@ class DQNagent():
         self.num_iters = 0
         self.save_interval = 5000
 
-        self.num_actions = 3
+        self.num_actions = 2
         self.num_input_frames = 4
         self.replay_memory_record = deque()
         self.replay_memory_size = 5e3
@@ -52,7 +52,7 @@ class DQNagent():
         self.optimizer = Adam(lr = 1e-4)
         self.DQN_model.compile(loss = 'mse', optimizer = self.optimizer)
 
-    def NextAction(self, reward):
+    def NextAction(self, reward, game_num):
         """TODO: Docstring for NextAction.
 
         :reward: TODO
@@ -67,7 +67,7 @@ class DQNagent():
         # Make decision
         # ε-greddy
         if random.random() <= self.epsilon:
-            action = random.choice([0, 1, 2])
+            action = random.choice([0, 1])
         else:
             q = self.DQN_model.predict(self.input_image)
             # print(q)
@@ -95,7 +95,7 @@ class DQNagent():
 
         # print some infomations
         if self.mode == 'train':
-            print('STATE: train, ITER: %s, EPSILON: %s, ACTION: %s, REWARD: %s, LOSS: %s, MAX_SCORE: %s' % (self.num_iters, self.epsilon, action, reward, float(loss), self.max_score))
+            print('STATE: train, GAME_NUM: %s, ITER: %s, EPSILON: %s, ACTION: %s, REWARD: %s, LOSS: %s, MAX_SCORE: %s' % (self.num_iters, game_num, self.epsilon, action, reward, float(loss), self.max_score))
         else:
             print('STATE: test, ACTION: %s, MAX_SCORE: %s' % (action, self.max_score))
 

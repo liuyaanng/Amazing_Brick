@@ -18,7 +18,7 @@ def Build_Q_network(image_size, channels, num_actions, **kwargs):
                             Conv2D(64, (3, 3), strides = (1, 1), padding = 'same'),
                             Activation('relu'),
                             Flatten(),
-                            Dense(512),
+                            Dense(256),
                             Activation('relu'),
                             Dense(num_actions)])
     return DQN_model
