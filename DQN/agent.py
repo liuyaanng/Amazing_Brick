@@ -126,7 +126,7 @@ class DQNagent():
         if self.mode == 'train':
             print('[INFO]: load checkpoints from %s and %s', (modelpath, modelpath.replace('h5', 'pkl')))
             self.DQN_model.load_weights(modelpath)
-            data_dict = pickle.loads(open(modelpath.replace('h5', 'pkl'), 'rb'))
+            data_dict = pickle.load(open(modelpath.replace('h5', 'pkl'), 'rb'))
             self.max_score = data_dict['max_score']
             self.epsilon = data_dict['epsilon']
             self.num_iters = data_dict['num_iters']
