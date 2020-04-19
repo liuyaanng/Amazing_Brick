@@ -82,7 +82,7 @@ class ENV(arcade.Window):
         
         # DQN config
         # Set init action = None
-        self.action = 0
+        self.action = 2
 
         # Set init reward = 0
         self.reward = 0
@@ -244,10 +244,10 @@ class ENV(arcade.Window):
         self.agent.record(self.action, reward, score, max_score, self.is_game_running, image)
 
         # make decision
-        action = self.agent.NextAction(reward, self.TOTAL_GAME_NUM)
+        self.action = self.agent.NextAction(reward, self.TOTAL_GAME_NUM)
         
         # Update game with action
-        self.player.update(action)
+        self.player.update(self.action)
         self.all_sprites.update()
 
     def on_draw(self):
