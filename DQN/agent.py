@@ -95,7 +95,7 @@ class DQNagent():
 
         # print some infomations
         if self.mode == 'train':
-            print('STATE: train, GAME_NUM: %s, ITER: %s, EPSILON: %s, ACTION: %s, REWARD: %s, LOSS: %s, MAX_SCORE: %s' % (self.num_iters, game_num, self.epsilon, action, reward, float(loss), self.max_score))
+            print('STATE: train, GAME_NUM: %s, ITER: %s, EPSILON: %s, ACTION: %s, REWARD: %s, LOSS: %s, MAX_SCORE: %s' % (game_num, self.num_iters, self.epsilon, action, reward, float(loss), self.max_score))
         else:
             print('STATE: test, ACTION: %s, MAX_SCORE: %s' % (action, self.max_score))
 
