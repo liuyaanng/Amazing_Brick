@@ -29,14 +29,14 @@ class DQNagent():
         self.final_epsilon = 1e-4
 
         self.num_observes = 3000
-        self.num_explores = 3e5
+        self.num_explores = 3e6
         self.num_iters = 0
         self.save_interval = 5000
 
         self.num_actions = 3
         self.num_input_frames = 4
         self.replay_memory_record = deque()
-        self.replay_memory_size = 3e4
+        self.replay_memory_size = 5e4
         self.image_size = (80, 80)
         self.input_image = None
 
@@ -86,7 +86,7 @@ class DQNagent():
             states = np.concatenate(states)
             states_next = np.concatenate(states_next)
             targets = self.DQN_model.predict(states_next)
-            print('actions: %s, rewards: %s' % (actions, rewards))
+            # print('actions: %s, rewards: %s' % (actions, rewards))
             # print(targets.shape)
             targets[range(32), actions] = rewards + self.discount_factor * np.max(self.DQN_model.predict(states_next), axis = 1) * is_game_running
             loss = self.DQN_model.train_on_batch(states, targets)
@@ -94,7 +94,7 @@ class DQNagent():
 
             if self.num_iters % self.save_interval == 0:
                 self.SaveModel(self.backup_path)
-                self.DrawLossFunc(self.loss_array)
+                self.DrawLossFunc(self.loss_array, self.num_iters)
 
         # print some infomations
         if self.mode == 'train':
@@ -104,7 +104,7 @@ class DQNagent():
 
         return action
     
-    def DrawLossFunc(self, loss):
+    def DrawLossFunc(self, loss, image_name):
         """TODO: Docstring for DrawLossFunc.
 
         :loss: TODO
@@ -115,7 +115,7 @@ class DQNagent():
             plt.plot(loss)
             plt.ylabel('Loss value')
             plt.xlabel('iters')
-            plt.savefig('loss_function.jpg')
+            plt.savefig('loss_function' + str(image_name) + '.jpg')
             # plt.show()
 
     def LoadModel(self, modelpath):
