@@ -40,7 +40,7 @@ class DQNagent():
         self.image_size = (80, 80)
         self.input_image = None
 
-        self.batch_size = 64
+        self.batch_size = 128
 
         self.max_score = 0
 
@@ -88,7 +88,7 @@ class DQNagent():
             targets = self.DQN_model.predict(states_next)
             # print('actions: %s, rewards: %s' % (actions, rewards))
             # print(targets.shape)
-            targets[range(32), actions] = rewards + self.discount_factor * np.max(self.DQN_model.predict(states_next), axis = 1) * is_game_running
+            targets[range(self.batch_size), actions] = rewards + self.discount_factor * np.max(self.DQN_model.predict(states_next), axis = 1) * is_game_running
             loss = self.DQN_model.train_on_batch(states, targets)
             self.loss_array = np.append(self.loss_array, loss)
 
