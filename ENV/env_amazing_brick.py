@@ -262,10 +262,10 @@ class ENV(arcade.Window):
         #self.all_sprites.draw()
 
         # Draw score on the screen
-        # score_text = f"Score: {self.score}"
+        score_text = f"{self.score}"
         # max_score_text = f"Max score:{self.MAX_SCORE}"
         # total_game_num_text = f"Num of game:{self.TOTAL_GAME_NUM}"
-        # arcade.draw_text(score_text, 10 , self.view_bottom + SCREEN_HEIGHT - 30, arcade.csscolor.RED, 18, font_name = "FreeSans")
+        arcade.draw_text(score_text, 10 , self.view_bottom + SCREEN_HEIGHT - 30, arcade.csscolor.RED, 18, font_name = "FreeSans")
         # arcade.draw_text(max_score_text, 10 , self.view_bottom + SCREEN_HEIGHT - 55, arcade.csscolor.RED, 10, font_name = "FreeSans")
         # arcade.draw_text(total_game_num_text, 10 , self.view_bottom + SCREEN_HEIGHT - 80, arcade.csscolor.RED, 18, font_name = "FreeSans")
 

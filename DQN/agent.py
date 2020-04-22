@@ -23,7 +23,7 @@ class DQNagent():
         
         self.mode = mode
         self.backup_path = backup_path
-        self.discount_factor = 0.99
+        self.discount_factor = 0.9
         self.epsilon = 0.1
         self.init_epsilon = 0.1
         self.final_epsilon = 1e-4
@@ -40,7 +40,7 @@ class DQNagent():
         self.image_size = (80, 80)
         self.input_image = None
 
-        self.batch_size = 32
+        self.batch_size = 64
 
         self.max_score = 0
 
@@ -147,14 +147,14 @@ class DQNagent():
 
         """
         self.DQN_model.save_weights(modelpath, overwrite = True)
-        data_dict = {
-                        'num_iters': self.num_iters,
-                        'epsilon': self.epsilon,
-                        'replay_memory_record': self.replay_memory_record,
-                        'max_score': self.max_score
-                    }
-        with open(modelpath.replace('h5', 'pkl'), 'wb') as f:
-            pickle.dump(data_dict, f)
+        # data_dict = {
+                        # 'num_iters': self.num_iters,
+                        # 'epsilon': self.epsilon,
+                        # 'replay_memory_record': self.replay_memory_record,
+                        # 'max_score': self.max_score
+                    # }
+        # with open(modelpath.replace('h5', 'pkl'), 'wb') as f:
+            # pickle.dump(data_dict, f)
         print('[INFO]: save checkpoints into %s and %s' % (modelpath, modelpath.replace('h5', 'pkl')))
 
     def record(self, action, reward, score, max_score, is_game_running, image):
