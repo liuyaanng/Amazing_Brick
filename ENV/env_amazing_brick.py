@@ -53,7 +53,7 @@ class ENV(arcade.Window):
         self.player_sprites.append(self.player)
 
         # Create two pipes when set up the game.
-        self.pipe_initial_position = SCREEN_HEIGHT + SCALING * IMAGE_HEIGHT
+        self.pipe_initial_position = SCREEN_HEIGHT + IMAGE_HEIGHT
         self.create_pipe_and_enemy(self.pipe_initial_position)
         self.create_pipe_and_enemy(self.pipe_initial_position + PIPE_TWO_DISTANCE)
 
@@ -175,9 +175,9 @@ class ENV(arcade.Window):
             or self.player.bottom < 0
             or self.view_bottom < 0):
             # time.sleep(0.5)
-            self.setup()
+            # self.setup()
             self.TOTAL_GAME_NUM += 1
-            is_game_running = False
+            self.is_game_running = False
             # Set reward
             reward = -1
 
@@ -298,15 +298,15 @@ class ENV(arcade.Window):
         self.is_add_pipe = False
         
         # Create two enemy
-        for i in range(0, 2):
+        # for i in range(0, 2):
 
             # Require the enemy position with pipe
-            self.enemy_position = random.randint(self.pipe_position + 25, self.pipe_position + PIPE_INTERVAL - 25)
-            enemy = arcade.Sprite(ENEMY_SOURCE, SCALING)
-            enemy.center_x = self.enemy_position
-            enemy.center_y = pipe_height - 130 - i * 130
-            self.enemy_sprites.append(enemy)
-            self.all_sprites.append(enemy)
+        self.enemy_position = random.randint(self.pipe_position - 25, self.pipe_position + PIPE_INTERVAL + 25)
+        enemy = arcade.Sprite(ENEMY_SOURCE, SCALING)
+        enemy.center_x = self.enemy_position
+        enemy.center_y = pipe_height - 130
+        self.enemy_sprites.append(enemy)
+        self.all_sprites.append(enemy)
         
     def get_pipe_y(self):
         """TODO: Docstring for get_pipe_y.
