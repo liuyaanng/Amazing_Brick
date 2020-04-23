@@ -53,7 +53,7 @@ class ENV(arcade.Window):
         self.player_sprites.append(self.player)
 
         # Create two pipes when set up the game.
-        self.pipe_initial_position = SCREEN_HEIGHT - SCALING * IMAGE_HEIGHT
+        self.pipe_initial_position = SCREEN_HEIGHT + SCALING * IMAGE_HEIGHT
         self.create_pipe_and_enemy(self.pipe_initial_position)
         self.create_pipe_and_enemy(self.pipe_initial_position + PIPE_TWO_DISTANCE)
 
@@ -304,7 +304,7 @@ class ENV(arcade.Window):
             self.enemy_position = random.randint(self.pipe_position + 25, self.pipe_position + PIPE_INTERVAL - 25)
             enemy = arcade.Sprite(ENEMY_SOURCE, SCALING)
             enemy.center_x = self.enemy_position
-            enemy.center_y = pipe_height + 130 + i * 130
+            enemy.center_y = pipe_height - 130 - i * 130
             self.enemy_sprites.append(enemy)
             self.all_sprites.append(enemy)
         

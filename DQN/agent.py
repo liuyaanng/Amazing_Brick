@@ -23,7 +23,7 @@ class DQNagent():
         
         self.mode = mode
         self.backup_path = backup_path
-        self.discount_factor = 0.9
+        self.discount_factor = 0.99
         self.epsilon = 0.1
         self.init_epsilon = 0.1
         self.final_epsilon = 1e-4
@@ -31,16 +31,16 @@ class DQNagent():
         self.num_observes = 3000
         self.num_explores = 3e6
         self.num_iters = 0
-        self.save_interval = 5000
+        self.save_interval = 10000
 
         self.num_actions = 3
         self.num_input_frames = 4
         self.replay_memory_record = deque()
-        self.replay_memory_size = 5e4
+        self.replay_memory_size = 1e6
         self.image_size = (80, 80)
         self.input_image = None
 
-        self.batch_size = 128
+        self.batch_size = 32
 
         self.max_score = 0
 

@@ -25,5 +25,5 @@ MAX_SCORE = 0
 
 # How many pixels to keep as a minium margin between character 
 # and the edge of the screen
-TOP_VIEW_MARGIN = 175
+TOP_VIEW_MARGIN = 300
 
